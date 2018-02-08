@@ -1,0 +1,15 @@
+{
+  "scripts": {
+    "dev": "NODE_ENV=development webpack --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "watch": "NODE_ENV=development webpack --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "hot": "NODE_ENV=development webpack-dev-server --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "production": "NODE_ENV=production webpack --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
+  },
+  "dependencies": {
+    "laravel-mix": "^2.0.0",
+    "ocrad.js": "^0.0.1",
+    "tesseract.js": "^1.0.10",
+    "webpack": "^3.10.0",
+    "handwriting":"https://github.com/ChenYuHo/handwriting.js"
+  }
+}

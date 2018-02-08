@@ -1,0 +1,5 @@
+ngrok
+node_modules/
+.DS_STORE
+build/
+public/
