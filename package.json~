@@ -7,10 +7,9 @@
   },
   "dependencies": {
     "laravel-mix": "^2.0.0",
-<<<<<<< HEAD
-    "webpack": "^3.10.0"
-=======
+    "ocrad.js": "^0.0.1",
+    "tesseract.js": "^1.0.10",
     "webpack": "^3.10.0",
->>>>>>> 28def87f7ab14bcbe9291428bc46d3d191527ea8
+    "handwriting":"https://github.com/ChenYuHo/handwriting.js"
   }
 }
