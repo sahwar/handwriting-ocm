@@ -60,62 +60,54 @@ class Canvas {
             this.context.lineTo(this.mouse.x,this.mouse.y);
             this.context.stroke();
 
-            for(let ind in this.handwriting) {
-                this.handwriting[ind].push(this.mouse[ind]);
-            }
+            this._saveTrace(this.mouse.x,this.mouse.y);
         }
     }
 
     _mouseDown(e) {
         this._setMouse(e);
         this.context.beginPath();
-        this.context.moveTo(this.mouse.x,this.mouse.y);
         this.canDraw = true;
-
-        this.handwriting.x = [];
-        this.handwriting.y = [];
         
-        this.handwriting.x.push(this.mouse.x);
-        this.handwriting.y.push(this.mouse.y);
+        this.context.moveTo(this.mouse.x,this.mouse.y);
+        this._saveTrace(this.mouse.x,this.mouse.y);
     }
 
     _mouseUp() {
         this.context.closePath();
-        
-        let handwriting = [];
-        handwriting.push(this.handwriting.x);
-        handwriting.push(this.handwriting.y);
-        handwriting.push([]);
-        
-        this.trace.push(handwriting);
-
         this.canDraw = false;
+
+        this._saveTrace(this.mouse.x,this.mouse.y);
+        this._saveTrace(null,null);
         this.recognize();
+
     }
 
     normalizeForGoogle(positions) {
-        let normalized = [];
-        let handwriting = { x:[], y:[] };
+        let trace = [],
+        handwriting = {x:[],y:[]};
 
         for(let ind=0; ind<positions.length; ind++) {
-            handwriting.x.push(positions[ind].x);
-            handwriting.y.push(positions[ind].y);
 
+            // on mouse up
             if(positions[ind].x == null || positions[ind].y == null) {
-                handwriting.push([]);
+                let tempo = [];
+                tempo.push(handwriting.x);
+                tempo.push(handwriting.y);
+                tempo.push([]);
+                trace.push(tempo);
+                handwriting.x = [];
+                handwriting.y = [];
+            } else {
+                handwriting.x.push(positions[ind].x);
+                handwriting.y.push(positions[ind].y);
             }
         }
-
-        normalized.push(handwriting.x);
-        normalized.push(handwriting.y);
-
-        return normalized;
+        
+        return trace;
     }
 
     recognize() {
-        if(this.trace.length < 2) return;
-
-        return;
         let url = 'https://www.google.com/inputtools/request?ime=handwriting';
         Ajax.post(url,{
             "options":"enable_pre_space",
@@ -124,7 +116,7 @@ class Canvas {
                     "writing_area_width":this.canvas.width,
                     "writing_area_height":this.canvas.height
                 },
-                "ink":this.trace,
+                "ink":this.normalizeForGoogle(this.trace),
                 "language":"en"
             }]
             },(result) => {
@@ -132,12 +124,17 @@ class Canvas {
                 let predictions = result[1][0][1];
 
                 html.innerHTML = predictions[0];
+                // console.log(predictions);
                 // html.innerHTML = "";
                 // for(let ind=0; ind<predictions.length; ind++) {
                 //     html.innerHTML = html.innerHTML + ', ' + predictions[ind];
                 // }
             }
         );
+    }
+
+    _saveTrace(x,y) {
+        this.trace.push({ x:x, y:y });
     }
 
     _setMouse(e) {
